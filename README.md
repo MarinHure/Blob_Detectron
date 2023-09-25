@@ -76,113 +76,106 @@ Prediction is performed using the pre-trained model saved as a Torchscript model
 
 Params:
 
-- img_name: The filename of the image to be detected.
-- data_dir: The path to the directory containing the script.
+    - img_name: The filename of the image to be detected.
+    - data_dir: The path to the directory containing the script.
 
 Returns:
 
-- outputs: A variable containing prediction information.
-- img: The input image.
+    - outputs: A variable containing prediction information.
+    - img: The input image.
 
 During the process, the image is converted from RGB (Red Green Blue) to BGR to ensure correct model operation.
 
 ## extractionOutputs(outputs): 
 
-Cette fonction extrait les données des ojbets prédits et les places dans des listes. 
+This function extracts data about the predicted objects and places them in lists.
 
-Params :  
-    
-    - outputs : variable qui contient les informations des prédictions. 
+Params:
 
-Returns : 
-   
-    - nœuds : liste des nœuds détectés. 
+    - outputs: A variable containing prediction information.
+  
+Returns:
 
-    - positions : dictionnaire contenant les positions (x,y) de chaque nœud. 
+    - nodes: A list of detected nodes.
+    - positions: A dictionary containing the positions (x, y) of each node.
+    - linkPositions: A dictionary containing the positions (x, y) of each link.
+  
+The function iterates through the outputs variable, takes the first tensor (output[0][i]) containing prediction boxes, and determines the object positions by calculating the center of each box.
 
-    - positionLiens : dictionnaire contenant les positions (x,y) de chaque lien. 
+It checks the predicted class (pred_class) to place the object in the correct list. 
 
-La fonction parcourt la variable output, prend le premier tensor (output[0][i]) qui contient les box de prédictions. 
+For secondary nodes, it ensures that no other node is within a distance of 6, as the model may detect two secondary nodes in the same location.
 
-On prend le centre de chaque boite pour identifier la position des objets.  
 
-On vérifie la classe prédite (pred_class) afin de placer l’objet dans la bonne liste. 
-
-Pour les nœuds secondaires, on vérifie qu’aucun autre nœud ne se situe à moins de 6, car il arrive au modèle de détecter deux nœuds secondaires au même endroit. 
 
 ## detectionLiens(positions, positionLiens, seuil, marge): 
 
-Cette fonction détecte si un lien est présent entre deux nœuds à l’aide des listes précédemment produites. 
+This function detects whether a link exists between two nodes using the previously generated lists.
 
-Params : 
-   
-    - positions : dictionnaire contenant les positions (x,y) de chaque nœud. 
+Params:
 
-    - positionLiens : dictionnaire contenant les positions (x,y) de chaque lien. 
+    - positions: A dictionary containing the positions (x, y) of each node.
+    - linkPositions: A dictionary containing the positions (x, y) of each link.
+    - seuil: The threshold for link detection.
+    - marge: A margin for positioning the link.
+  
+Returns:
 
-Returns :  
-   
-    - listeLiensFinal : liste des liens détectés entre deux nœuds, composés de tuples de nœuds. 
+    - finalLinksList: A list of detected links between two nodes, composed of node tuples.
+    
+A double loop iterates through the node list, draws a line between each pair of nodes, and then goes through the link list. 
+It calculates the distance between the link and the line, considering the link present between two nodes if the distance is less than the "threshold".
 
-Une double boucle parcourt la liste de nœuds, trace une droite entre chaque paire de nœuds, puis parcourt la liste de liens. On calcule la distance entre le lien et la droite, si elle est inférieure au “seuil”, on considère que le lien est prédsent entre deux nœuds.  
+Furthermore, it checks that the x and y coordinates of the link fall within the x and y coordinates of the nodes (with a "marge"). 
 
-De plus, on vérifie que les x et y du lien, sont placés entre les x et y des nœuds (avec une “marge”). 
-
-Ensuite, on parcourt nos résultats, pour chaque paire de nœuds reliée par un lien, on vérifie qu’il n’existe pas une paire de nœuds plus rapprochés.  
+It then checks for any pairs of nodes connected by a link if there is a pair of nodes closer to each other.
 
 ## drawGraph(nœuds, positions, listeLiensFinal): 
 
-Cette fonction crée un graphe NetworkX à partir des listes de nœuds et de liens. 
+This function creates a NetworkX graph from the lists of nodes and links.
 
-Params : 
-   
-    - nœuds:  liste des nœuds. 
+Params:
 
-    - positions : dictionnaire contenant les positions (x,y) de chaque nœud. 
-
-    - listeLiensFinal: Liste des paires de nœuds connectés par des liens. 
+    - noeuds: A list of nodes.
+    - positions: A dictionary containing the positions (x, y) of each node.
+    - listeLiensFinal: A list of node pairs connected by links.
 
 ## conversionBlobRecorder(image,graph,positions,echelle,img_name): 
 
-Cette fonction converti le graphe NetworkX en JSON exploitable par l’outil Blob Recorder. 
+This function converts the NetworkX graph into JSON format that can be used with the Blob Recorder tool.
 
-Params :  
-   
-    - image: c’est l’image d’origine. 
+Params:
 
-    - graph: le graphe NetworkX. 
+    - image: The original image.
+    - graph: The NetworkX graph.
+    - positions: The dictionary containing the positions of different nodes.
+    - echelle: A scale to match the Blob Recorder image format.
+    - img_name: The name of the image.
+  
+The function iterates through the node and link lists, entering the values into a dictionary in the format expected by Blob Recorder. 
 
-    - positions: le dictionnaire contennant les positions des différents nœuds. 
-
-    - echelle: une echelle pour convenir au format d’image de Blob Recorder.  
-
-    - img_name: le nom de l’image 
-
-La fonction parcourt les listes de nœuds et liens, pour rentrer les valeurs dans un dictionnaire au format attendu par Blob Recorder. 
-
-Ensuite elle enregistre le résultat dans un fichier JSON au même nom que l’image. 
+It then saves the result in a JSON file with the same name as the image.
 
 ## blobDetection(img_name, data_dir): 
 
+This final function allows running the other functions.
 
-Cette dernière fonction permet de lancer les autres fonctions.  
+Params:
 
-
-Params : 
-   
-    - img_name : le nom de l’image à détecter. 
-    
-    - data_dir : le chemin du répertoire ou se trouvent les fichiers. 
-
+    - img_name: The name of the image to detect.
+    - data_dir: The directory path where the files are located.
  
 
-# Limites/Problèmes rencontrés
+# Limitations/Challenges Encountered
 
-Quelques fois, le blob trace un lien avec une trop forte courbure, et la fonction detectionLiens() utilise son centre pour détecter sa présence, ce qui peut amener à des erreurs, c'est à ca que servent "seuil" et "marge", mais cela ne suffit pas toujours : 
+At times, the blob creates a link with excessive curvature, and the detectionLiens() function uses its center to detect its presence, which can lead to errors. This is where the "threshold" and "margin" parameters come into play, but they may not always suffice: 
 
 ![Erreur detection lien](images_readme/pb_lien.png)
 
-Il arrive que le modèle détecte 2 Noeuds secondaires collés l'un à l'autre au lieu d'un seul. Ce problème a été réglé en post-traitement dans extractionOutputs() : 
+There are instances where the model detects two secondary nodes stuck together instead of one. This issue has been addressed in post-processing within the extractionOutputs() function : 
 
 ![Erreur detection Ns](images_readme/pb_ns.png)
+
+
+Please note that for confidentiality reasons, the model and the training images are not available on this GitHub repository. If you wish to access the images, you can contact the following addresses: y.boudi@labsoft.fr or j.otando@labsoft.fr.
 
