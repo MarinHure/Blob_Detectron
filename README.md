@@ -18,7 +18,7 @@ To achieve this, we define three distinct classes:
 To automatically detect the various elements in an image, we employ a machine learning object detection model. 
 We then process the identified data in a script to obtain a JSON file containing the position information of the different objects..  
 
-# Entrainement du modèle (Blob_training.ipynb) 
+# Model Training (Blob_training.ipynb) 
 
 The dataset consists of 192 images of petri dishes, annotated using the Supervisely tool
 
