@@ -96,9 +96,9 @@ Params:
   
 Returns:
 
-    - nodes: A list of detected nodes.
+    - noeuds: A list of detected nodes.
     - positions: A dictionary containing the positions (x, y) of each node.
-    - linkPositions: A dictionary containing the positions (x, y) of each link.
+    - positionLiens: A dictionary containing the positions (x, y) of each link.
   
 The function iterates through the outputs variable, takes the first tensor (output[0][i]) containing prediction boxes, and determines the object positions by calculating the center of each box.
 
@@ -115,13 +115,13 @@ This function detects whether a link exists between two nodes using the previous
 Params:
 
     - positions: A dictionary containing the positions (x, y) of each node.
-    - linkPositions: A dictionary containing the positions (x, y) of each link.
+    - positionLiens: A dictionary containing the positions (x, y) of each link.
     - seuil: The threshold for link detection.
     - marge: A margin for positioning the link.
   
 Returns:
 
-    - finalLinksList: A list of detected links between two nodes, composed of node tuples.
+    - listeLiensFinal: A list of detected links between two nodes, composed of node tuples.
     
 A double loop iterates through the node list, draws a line between each pair of nodes, and then goes through the link list. 
 It calculates the distance between the link and the line, considering the link present between two nodes if the distance is less than the "threshold".
