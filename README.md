@@ -15,78 +15,76 @@ To achieve this, we define three distinct classes:
 - Links (Lp): The path traveled by the blob between two nodes.
 - Secondary Nodes (Ns): Crossroads between multiple links.
   
-To automatically detect the various elements in an image, we employ a machine learning object detection model. We then process the identified data in a script to obtain a JSON file containing the position information of the different objects..  
+To automatically detect the various elements in an image, we employ a machine learning object detection model. 
+We then process the identified data in a script to obtain a JSON file containing the position information of the different objects..  
 
 # Entrainement du modèle (Blob_training.ipynb) 
 
-Le dataset est composé de 192 images de boite de pétri, annotées avec l’outil Supervisely. 
+The dataset consists of 192 images of petri dishes, annotated using the Supervisely tool
 
-![Annotation avec supervisely](images_readme/supervisely.png)  
+![Annotation with supervisely](images_readme/supervisely.png)  
 
-Les annotations sont exportées au format coco, et séparées en données d’entrainement "physarum_train" (80%) et de test "physarum_test" (20%). 
+Annotations are exported in the COCO format and split into training data "physarum_train" (80%) and test data "physarum_test" (20%).
 
-Le choix du modèle s’est porté sur Mask R-CNN, une extension de Faster RCNN, un modèle utilisant l’API de Detectron2. 
+We chose the Mask R-CNN model, an extension of Faster R-CNN, which utilizes the Detectron2 API.
 
-L'entrainement du modèle se fait sur le notebook Blob_training.ipynb
+The model training is conducted in the Blob_training.ipynb notebook.
 
-Faster R-CNN est un réseau de neurones, il fonctionne sur deux étages, d’abord il identifie les zones d’intéret, puis les envoie a un réseau neuronal convolutif. Les résultats de sortie sont passés à une Machine à vecteurs de support (SVM)  pour les classifier. 
+Faster R-CNN is a neural network that operates in two stages. First, it identifies regions of interest and then passes them to a convolutional neural network. The output results are fed into a Support Vector Machine (SVM) for classification. Subsequently, regression is performed to adjust the predicted bounding box to the exact position and size of the real object within the region of interest.
 
-Une régression est ensuite effectuée pour ajuster la boîte englobante prédite à la position et à la taille exactes de l'objet réel dans la région d'intérêt. 
+Mask R-CNN is capable of both object detection and semantic segmentation of the detected instances, allowing us to obtain masks for the detected objects rather than simple bounding boxes.
 
-Mask R-CNN est capable de réaliser à la fois la détection d'objets et la segmentation sémantique des instances détectées, ce qui nous permet d’obtenir des masques des objets détectés, plutôt que de simples box. 
+## Model Training Settings :  
 
-## Réglages d’entrainement du modèle :  
+To accelerate training and improve model performance, the initial network weights are loaded from the pre-trained "R-50.pkl" model on ImageNet.
 
-Pour accélérer l'entraînement et améliorer les performances du modèle, le poids initial du réseau est chargé à partir du modèle pré-entraîné "R-50.pkl" sur ImageNet. 
+cfg.SOLVER.IMS_PER_BATCH = 4 sets the number of images used for each gradient update. A larger batch size allows for better GPU resource utilization, speeding up training.
 
-cfg.SOLVER.IMS_PER_BATCH = 4 définit le nombre d'images utilisées pour chaque mise à jour de gradient. Une taille de lot plus grande permet d'exploiter davantage les ressources GPU, accélérant ainsi l'entraînement. 
+The model is trained for cfg.SOLVER.MAX_ITER = 3000 iterations. The number of iterations controls the training duration and allows the model to converge to an optimal solution.
 
-Le modèle est entraîné pendant cfg.SOLVER.MAX_ITER = 3000 itérations. Le nombre d'itérations contrôle la durée de l'entraînement et permet au modèle de converger vers une solution optimale. 
+Batch size per image: The parameter cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 8 specifies the number of region proposals (ROI) for each training image.
 
-Taille du lot par image : Le paramètre cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 8 spécifie le nombre de propositions de région (ROI) pour chaque image d'entraînement. 
+Detection score threshold: The detection score threshold is set to cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.45, meaning that only detections with a score greater than 0.45 are considered during inference.
 
-Seuil de score de détection : Le seuil de score de détection est fixé à cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.45. Cela signifie que seules les détections dont le score est supérieur à 0.45 seront prises en compte lors de l'inférence. 
+## Model Performance Metrics
 
-## Mesures de performance du modèle
+To assess model performance, we visualize certain performance metrics:
 
-Pour mesurer les performances du modèle, on visualise certaines métriques de performance :
+![Performance Metrics](images_readme/evaluation.png)
 
-![Métriques de performance](images_readme/evaluation.png)
+We evaluate the model's performance :  
+- Average Precision : eby comparing its predictions to the ground truth annotations at various Intersection over Union (IoU) threshold values (measuring the degree of overlap between the model's prediction and the actual annotation of an object).
+- Average Recall : indicate what proportion of the objects actually present in the image were correctly detected by the model.
 
-On évalue la performance du modèle :  
-- Average Precision : en comparant ses prédictions avec les annotations réelles à différentes valeurs seuil d'Intersection over Union (IoU : mesure le degré de chevauchement entre la prédiction du modèle et l'annotation réelle d'un objet).
-- Average Recall : indique quelle proportion des objets réellement présents dans l'image a été correctement détectée par le modèle.
+Additionally, we visualize the results to measure performance during adjustments:
 
-On visualise aussi les résultats pour mesurer les performances au fur et a mesure des réglages : 
-
-![Visualisation Résultats](images_readme/visualisation1.png)  ![Visualisation NetworkX](images_readme/visualisation2.png)
+![Results Visualization](images_readme/visualisation1.png)  ![NetworkX Visualization](images_readme/visualisation2.png)
 
 
-# Fonctionnement du script :  
+# Script Operation :  
 
-Le script Blob_detection.py prends une image en entrée et donne en sortie un fichier Json contenant les positions des objets prédits. 
+The Blob_detection.py script takes an image as input and outputs a JSON file containing the positions of the predicted objects.
 
-Pour ce faire, le script est composé de 6 fonctions :  
+To achieve this, the script comprises six functions :
+
 
 ## prediction(img_name, data_dir): 
 
-Cette fonction effectue une prédiction des objets présents sur l’image, et donne en sortie les informations à leur sujet.  
+This function predicts the objects present in the image and provides information about them.
 
-Cette prédiction s’effectue à l’aide du modèle pré-entrainé, enregistré en modèle Torchscript. 
+Prediction is performed using the pre-trained model saved as a Torchscript model.
 
-Params:  
-    
-    - img_name : nom du fichier d el’image à détecter. 
+Params:
 
-    - data_dir : chemin du dossier ou se trouvent le script. 
+- img_name: The filename of the image to be detected.
+- data_dir: The path to the directory containing the script.
 
-Returns: 
+Returns:
 
-    - outputs : variable qui contient les informations des prédictions. 
+- outputs: A variable containing prediction information.
+- img: The input image.
 
-    - img : l’image d’entrée. 
-        
-Dans le processus, l’image est transformée de RGB (Red Green Blue) à BGR pour que le modèle fonctionne correctement.  
+During the process, the image is converted from RGB (Red Green Blue) to BGR to ensure correct model operation.
 
 ## extractionOutputs(outputs): 
 
