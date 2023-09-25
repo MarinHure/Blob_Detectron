@@ -2,7 +2,9 @@
 
 This project was conducted as part of an internship as Data Scientist at LABSOFT during my engineering studies.
 
-The project's goal is to develop a tool for automatically detecting and simulating the network created by the Physarum polycephalum (blob) from an input image.
+LABSOFT works with the ![CNRS](https://en.wikipedia.org/wiki/French_National_Centre_for_Scientific_Research) (French National Centre for Scientific Research), studying the ![Physarum Polycephalum](https://en.wikipedia.org/wiki/Physarum_polycephalum).
+
+The project's goal is to develop a tool for automatically detecting and simulating the network created by the Physarum Polycephalum (blob) from an input image.
 
 CNRS conducts experiments with the blob in petri dishes and captures photographs.
 
