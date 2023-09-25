@@ -1,23 +1,21 @@
 # Blob detectron inference
 
- Le projet vise à développer un outil pour détecter et simuler automatiquement le réseau créé par le Physarum polycephalum (blob) à partir d'une image d'entrée. 
+This project was conducted as part of an internship as Data Scientist at LABSOFT during my engineering studies.
 
-Le CNRS réalise des expériences avec le blob dans des boîtes de pétri, et les photographies. 
+The project's goal is to develop a tool for automatically detecting and simulating the network created by the Physarum polycephalum (blob) from an input image.
 
-![Physarum boite de petri](images_readme/boitepetri.png) 
+CNRS conducts experiments with the blob in petri dishes and captures photographs.
+
+![Physarum petri dish](images_readme/boitepetri.png) 
 
 
-Pour ce faire, nous déclarons 3 classes différentes :  
+To achieve this, we define three distinct classes:
 
-    - Les nœuds principaux (Np) : Point d’attirance, souvent un flocon d’avoine.  
-
-    - Les liens (Lp) : Le chemin parcouru par le blob entre deux nœuds. 
-
-    - Les nœuds secondaires (Ns) : croisement entre plusieurs liens. 
-
-Afin de détecter automatique les différents éléments sur une image, nous utilisons un modèle de machine learning de détection d’objets. 
-
-Nous exploitons ensuite les données identifiées dans un script afin d’obtenir un fichier JSON contenant les informations de position des différents objets.  
+- Main Nodes (Np): Attraction points, often oat flakes.
+- Links (Lp): The path traveled by the blob between two nodes.
+- Secondary Nodes (Ns): Crossroads between multiple links.
+  
+To automatically detect the various elements in an image, we employ a machine learning object detection model. We then process the identified data in a script to obtain a JSON file containing the position information of the different objects..  
 
 # Entrainement du modèle (Blob_training.ipynb) 
 
