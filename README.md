@@ -17,7 +17,7 @@ To achieve this, we define three distinct classes:
 - Links (Lp): The path traveled by the blob between two nodes.
 - Secondary Nodes (Ns): Crossroads between multiple links.
   
-To automatically detect the various elements in an image, we employ a machine learning object detection model. 
+To automatically detect the various elements in an image, we employ a Deep Learning object detection model. 
 We then process the identified data in a script to obtain a JSON file containing the position information of the different objects..  
 
 # Model Training (Blob_training.ipynb) 
