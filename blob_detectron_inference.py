@@ -145,14 +145,14 @@ def drawGraph(nodes, positions, finalLinksList, image):
   return graph
 
 
-def conversionBlobRecorder(img,graph,positions,echelle,img_name):
+def conversionBlobRecorder(img,graph,positions,scale,img_name):
   """
   This function converts the NetworkX graph to the "Blob Recorder" JSON format and saves it into the JSON_results folder.
 
   :param img: This is the numpy array image.
   :param graph: This is the NetworkX graph.
   :param positions: Contains the coordinates of each node.
-  :param echelle: This is a scaling variable, to fit the Blob Recorder image.
+  :param scale: This is a scaling variable, to fit the Blob Recorder image.
   :param img_name: This is the name of the image.
   :returns: Returns a JSON file, with the name of the image.
   """
@@ -165,14 +165,14 @@ def conversionBlobRecorder(img,graph,positions,echelle,img_name):
   for node in graph.nodes:
       x, y = positions[node]    # On récupère les posisitions
       y_inverted = image_height - y  # Inverser axe y
-      x_echelle = x * echelle # Mise à l'échelle
-      y_echelle = y_inverted * echelle # Mise à l'échelle
+      x_scale = x * scale # Mise à l'échelle
+      y_scale = y_inverted * scale # Mise à l'échelle
       if(node.startswith('Np')): # Noeud Principal
         feature = {
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [x_echelle, y_echelle]
+                "coordinates": [x_scale, y_scale]
             },
             "properties": {
                 "geometryNamex": "Noeud source",
@@ -185,7 +185,7 @@ def conversionBlobRecorder(img,graph,positions,echelle,img_name):
                   "type": "Feature",
                   "geometry": {
                       "type": "Point",
-                      "coordinates": [x_echelle, y_echelle]
+                      "coordinates": [x_scale, y_scale]
                   },
                   "properties": {
                       "geometryNamex": "Noeud secondaire",
@@ -199,17 +199,17 @@ def conversionBlobRecorder(img,graph,positions,echelle,img_name):
       start_node, end_node = edge   # nodes connectés au lien
       start_x, start_y = positions[start_node]  # x,y premier noeud
       end_x, end_y = positions[end_node]   # x,y second noeud
-      start_x_echelle = start_x * echelle # mise à l'échelle
-      end_x_echelle = end_x * echelle # mise à l'échelle
+      start_x_scale = start_x * scale # mise à l'échelle
+      end_x_scale = end_x * scale # mise à l'échelle
       start_y_inverted = image_height - start_y  # Inversion axe y
       end_y_inverted = image_height - end_y
-      start_y_echelle = start_y_inverted * echelle # mise à l'échelle
-      end_y_echelle = end_y_inverted * echelle # mise à l'échelle
+      start_y_scale = start_y_inverted * scale # mise à l'échelle
+      end_y_scale = end_y_inverted * scale # mise à l'échelle
       feature = {
           "type": "Feature",
           "geometry": {
               "type": "LineString",
-              "coordinates": [[start_x_echelle, start_y_echelle], [end_x_echelle, end_y_echelle]]
+              "coordinates": [[start_x_scale, start_y_scale], [end_x_scale, end_y_scale]]
           },
           "properties": {
               "geometryNamex": "Veine primaire",
@@ -235,13 +235,13 @@ def blobDetection(img_name, data_dir):
   :param img_name: This is the name of the image.
   """
   
-  echelle = 1.28 # Mise à l'échelle par rapport a l'image blob recorder
+  scale = 1.28 # Mise à l'échelle par rapport a l'image blob recorder
 
   outputs, image = prediction(img_name, data_dir)  # Prediction using TorchScript Model
   nodes, positions, linkPositions = extractionOutputs(outputs)  # Extraction of outputs data
   finalLinksList = detectionLiens(positions, linkPositions)  # Link detection between Nodes
   graph = drawGraph(nodes, positions, finalLinksList, image)  # Conversion to NetworkX and Drawing
-  file_json = conversionBlobRecorder(image,graph,positions,echelle,img_name)  # Conversion NetworkX to Blob Recorder
+  file_json = conversionBlobRecorder(image,graph,positions,scale,img_name)  # Conversion NetworkX to Blob Recorder
 
 blobDetection("boite_41_1.png", "C:\\Users\\Marin HURE\\Desktop\\physarum")
 
