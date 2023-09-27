@@ -98,9 +98,9 @@ Params:
   
 Returns:
 
-    - noeuds: A list of detected nodes.
+    - nodes: A list of detected nodes.
     - positions: A dictionary containing the positions (x, y) of each node.
-    - positionLiens: A dictionary containing the positions (x, y) of each link.
+    - linkPositions: A dictionary containing the positions (x, y) of each link.
   
 The function iterates through the outputs variable, takes the first tensor (output[0][i]) containing prediction boxes, and determines the object positions by calculating the center of each box.
 
@@ -110,14 +110,14 @@ For secondary nodes, it ensures that no other node is within a distance of 6, as
 
 
 
-## detectionLiens(positions, positionLiens, seuil, marge): 
+## detectionLiens(positions, linkPositions, seuil, marge): 
 
 This function detects whether a link exists between two nodes using the previously generated lists.
 
 Params:
 
     - positions: A dictionary containing the positions (x, y) of each node.
-    - positionLiens: A dictionary containing the positions (x, y) of each link.
+    - linkPositions: A dictionary containing the positions (x, y) of each link.
     - seuil: The threshold for link detection.
     - marge: A margin for positioning the link.
   
@@ -138,7 +138,7 @@ This function creates a NetworkX graph from the lists of nodes and links.
 
 Params:
 
-    - noeuds: A list of nodes.
+    - nodes: A list of nodes.
     - positions: A dictionary containing the positions (x, y) of each node.
     - listeLiensFinal: A list of node pairs connected by links.
 
