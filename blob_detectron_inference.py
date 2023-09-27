@@ -87,7 +87,7 @@ def extractionOutputs(outputs):
   return nodes, positions, linkPositions
 
 
-def detectionLiens(positions, linkPositions):
+def linksDetection(positions, linkPositions):
   """
   This function detects if there is a link between two nodes.
 
@@ -239,7 +239,7 @@ def blobDetection(img_name, data_dir):
 
   outputs, image = prediction(img_name, data_dir)  # Prediction using TorchScript Model
   nodes, positions, linkPositions = extractionOutputs(outputs)  # Extraction of outputs data
-  finalLinksList = detectionLiens(positions, linkPositions)  # Link detection between Nodes
+  finalLinksList = linksDetection(positions, linkPositions)  # Link detection between Nodes
   graph = drawGraph(nodes, positions, finalLinksList, image)  # Conversion to NetworkX and Drawing
   file_json = conversionBlobRecorder(image,graph,positions,scale,img_name)  # Conversion NetworkX to Blob Recorder
 
