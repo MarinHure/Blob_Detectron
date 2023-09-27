@@ -110,7 +110,7 @@ For secondary nodes, it ensures that no other node is within a distance of 6, as
 
 
 
-## detectionLiens(positions, linkPositions, seuil, marge): 
+## detectionLiens(positions, linkPositions, threshold, margin): 
 
 This function detects whether a link exists between two nodes using the previously generated lists.
 
@@ -118,8 +118,8 @@ Params:
 
     - positions: A dictionary containing the positions (x, y) of each node.
     - linkPositions: A dictionary containing the positions (x, y) of each link.
-    - seuil: The threshold for link detection.
-    - marge: A margin for positioning the link.
+    - threshold: The threshold for link detection.
+    - margin: A margin for positioning the link.
   
 Returns:
 
@@ -128,7 +128,7 @@ Returns:
 A double loop iterates through the node list, draws a line between each pair of nodes, and then goes through the link list. 
 It calculates the distance between the link and the line, considering the link present between two nodes if the distance is less than the "threshold".
 
-Furthermore, it checks that the x and y coordinates of the link fall within the x and y coordinates of the nodes (with a "marge"). 
+Furthermore, it checks that the x and y coordinates of the link fall within the x and y coordinates of the nodes (with a "margin"). 
 
 It then checks for any pairs of nodes connected by a link if there is a pair of nodes closer to each other.
 
