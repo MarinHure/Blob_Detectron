@@ -123,7 +123,7 @@ Params:
   
 Returns:
 
-    - listeLiensFinal: A list of detected links between two nodes, composed of node tuples.
+    - finalLinksList: A list of detected links between two nodes, composed of node tuples.
     
 A double loop iterates through the node list, draws a line between each pair of nodes, and then goes through the link list. 
 It calculates the distance between the link and the line, considering the link present between two nodes if the distance is less than the "threshold".
@@ -132,7 +132,7 @@ Furthermore, it checks that the x and y coordinates of the link fall within the 
 
 It then checks for any pairs of nodes connected by a link if there is a pair of nodes closer to each other.
 
-## drawGraph(nœuds, positions, listeLiensFinal): 
+## drawGraph(nœuds, positions, finalLinksList): 
 
 This function creates a NetworkX graph from the lists of nodes and links.
 
@@ -140,7 +140,7 @@ Params:
 
     - nodes: A list of nodes.
     - positions: A dictionary containing the positions (x, y) of each node.
-    - listeLiensFinal: A list of node pairs connected by links.
+    - finalLinksList: A list of node pairs connected by links.
 
 ## conversionBlobRecorder(image,graph,positions,echelle,img_name): 
 
