@@ -95,8 +95,8 @@ def detectionLiens(positions, linkPositions):
   :param linkPositions: Contains the positions of the links.
   :returns: Returns the list of links, represented by a tuple of nodes.
   """
-  seuil=25 # Seuil distance lien / droite entre deux nodes
-  marge=25 # MARGE POINT(lien) COMPRIS ENTRE X1 X2
+  threshold=25 # threshold distance lien / droite entre deux nodes
+  margin=25 # margin POINT(lien) COMPRIS ENTRE X1 X2
   listeLiens = []  # Liste de liens détectés entre deux nodes (avec distance entre les nodes)
   for i in positions:
     for j in positions:
@@ -110,7 +110,7 @@ def detectionLiens(positions, linkPositions):
           x= linkPositions[k][0]
           y= linkPositions[k][1]
           distance = abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) / math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2) # Distance point - ligne
-          if (distance <= seuil) and ((y1-marge <= y <= y2+marge) or (y2-marge<= y <= y1+marge)) and ((x1-marge<= x <=x2+marge) or (x2-marge<= x <= x1+marge)) : # Vérifie si lien présent à distance (seuil) de la droite tracée par deux nodes
+          if (distance <= threshold) and ((y1-margin <= y <= y2+margin) or (y2-margin<= y <= y1+margin)) and ((x1-margin<= x <=x2+margin) or (x2-margin<= x <= x1+margin)) : # Vérifie si lien présent à distance (threshold) de la droite tracée par deux nodes
             listeLiens.append((k,i,j,ecart))
 
   resultats = {} # On ne garde que les paires de nodes les plus proches
