@@ -110,7 +110,7 @@ For secondary nodes, it ensures that no other node is within a distance of 6, as
 
 
 
-## detectionLiens(positions, linkPositions, threshold, margin): 
+## linksDetection(positions, linkPositions, threshold, margin): 
 
 This function detects whether a link exists between two nodes using the previously generated lists.
 
@@ -170,7 +170,7 @@ Params:
 
 # Limitations/Challenges Encountered
 
-At times, the blob creates a link with excessive curvature, and the detectionLiens() function uses its center to detect its presence, which can lead to errors. This is where the "threshold" and "margin" parameters come into play, but they may not always suffice: 
+At times, the blob creates a link with excessive curvature, and the linksDetection() function uses its center to detect its presence, which can lead to errors. This is where the "threshold" and "margin" parameters come into play, but they may not always suffice: 
 
 ![Erreur detection lien](images_readme/pb_lien.png)
 
