@@ -142,7 +142,7 @@ Params:
     - positions: A dictionary containing the positions (x, y) of each node.
     - finalLinksList: A list of node pairs connected by links.
 
-## conversionBlobRecorder(image,graph,positions,echelle,img_name): 
+## conversionBlobRecorder(image,graph,positions,scale,img_name): 
 
 This function converts the NetworkX graph into JSON format that can be used with the Blob Recorder tool.
 
@@ -151,7 +151,7 @@ Params:
     - image: The original image.
     - graph: The NetworkX graph.
     - positions: The dictionary containing the positions of different nodes.
-    - echelle: A scale to match the Blob Recorder image format.
+    - scale: A scale to match the Blob Recorder image format.
     - img_name: The name of the image.
   
 The function iterates through the node and link lists, entering the values into a dictionary in the format expected by Blob Recorder. 
