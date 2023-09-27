@@ -122,26 +122,26 @@ def detectionLiens(positions, linkPositions):
           if ecart < min_ecart: # Comparaison
               resultats[k] = (i, j, ecart)
 
-  listeLiensFinal = [] # Liste finale pour NetworkX
+  finalLinksList = [] # Liste finale pour NetworkX
   for k in resultats:
     i, j, _ = resultats[k]
-    listeLiensFinal.append((i,j))
-  return listeLiensFinal
+    finalLinksList.append((i,j))
+  return finalLinksList
 
 
-def drawGraph(nodes, positions, listeLiensFinal, image):
+def drawGraph(nodes, positions, finalLinksList, image):
   """
   This function creates a NetworkX graph from the nodes/link informations and overlay the graph on the base image.
 
   :param nodes: This is a list of the existing nodes.
   :param positions: This is a dictionnary of the coordinates of each node.
-  :param listeLiensFinal: Contains tuples of nodes that are connected by a link.
+  :param finalLinksList: Contains tuples of nodes that are connected by a link.
   :param image: This is the original image
   :returns: Rerturns the NetworkX Graph that has been created.
   """
   graph = nx.Graph()
   graph.add_nodes_from(nodes)
-  graph.add_edges_from(listeLiensFinal)
+  graph.add_edges_from(finalLinksList)
   return graph
 
 
@@ -239,8 +239,8 @@ def blobDetection(img_name, data_dir):
 
   outputs, image = prediction(img_name, data_dir)  # Prediction using TorchScript Model
   nodes, positions, linkPositions = extractionOutputs(outputs)  # Extraction of outputs data
-  listeLiensFinal = detectionLiens(positions, linkPositions)  # Link detection between Nodes
-  graph = drawGraph(nodes, positions, listeLiensFinal, image)  # Conversion to NetworkX and Drawing
+  finalLinksList = detectionLiens(positions, linkPositions)  # Link detection between Nodes
+  graph = drawGraph(nodes, positions, finalLinksList, image)  # Conversion to NetworkX and Drawing
   file_json = conversionBlobRecorder(image,graph,positions,echelle,img_name)  # Conversion NetworkX to Blob Recorder
 
 blobDetection("boite_41_1.png", "C:\\Users\\Marin HURE\\Desktop\\physarum")
