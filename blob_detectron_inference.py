@@ -43,10 +43,10 @@ def extractionOutputs(outputs):
   :param outputs: This is the output for the predictions
   :returns: Returns arrays that contains the nodes informations (name, position) and their links (name, position)
   """
-  noeuds = []
+  nodes = []
   positions = {}
   liens = []
-  positionLiens = {}
+  linkPositions = {}
   c= c1= c2=1 # Compteurs (Np, Liens, Ns)
 
   for i in range(len(outputs[0])):
@@ -59,14 +59,14 @@ def extractionOutputs(outputs):
     if pred_classes == 0: # Noeud principal
       bbox_str = 'Np' + str(c) # Nommage avec compteur
       c=c+1
-      noeuds.append(bbox_str) # Ajout du nœud à la liste des nœuds
+      nodes.append(bbox_str) # Ajout du nœud à la liste des nœuds
       positions[bbox_str] = [x,y] 
 
     elif pred_classes == 1: #Liens
       bbox_str = 'L' + str(c1)
       c1=c1+1
       liens.append(bbox_str)
-      positionLiens[bbox_str] = [x,y]
+      linkPositions[bbox_str] = [x,y]
 
     elif pred_classes == 2: # Noeud secondaire
       verif= True
@@ -82,22 +82,22 @@ def extractionOutputs(outputs):
              break
       if verif :
         c2=c2+1
-        noeuds.append(bbox_str)
+        nodes.append(bbox_str)
         positions[bbox_str] = [x,y]
-  return noeuds, positions, positionLiens
+  return nodes, positions, linkPositions
 
 
-def detectionLiens(positions, positionLiens):
+def detectionLiens(positions, linkPositions):
   """
   This function detects if there is a link between two nodes.
 
   :param positions: Contains the positions of the nodes.
-  :param positionLiens: Contains the positions of the links.
+  :param linkPositions: Contains the positions of the links.
   :returns: Returns the list of links, represented by a tuple of nodes.
   """
-  seuil=25 # Seuil distance lien / droite entre deux noeuds
+  seuil=25 # Seuil distance lien / droite entre deux nodes
   marge=25 # MARGE POINT(lien) COMPRIS ENTRE X1 X2
-  listeLiens = []  # Liste de liens détectés entre deux noeuds (avec distance entre les noeuds)
+  listeLiens = []  # Liste de liens détectés entre deux nodes (avec distance entre les nodes)
   for i in positions:
     for j in positions:
       if i!= j:
@@ -105,15 +105,15 @@ def detectionLiens(positions, positionLiens):
         x2= positions[j][0]
         y1= positions[i][1]
         y2= positions[j][1]
-        ecart = math.sqrt((x2-x1)**2 + (y2-y1)**2) #  Distance entre 2 noeuds
-        for k in positionLiens:
-          x= positionLiens[k][0]
-          y= positionLiens[k][1]
+        ecart = math.sqrt((x2-x1)**2 + (y2-y1)**2) #  Distance entre 2 nodes
+        for k in linkPositions:
+          x= linkPositions[k][0]
+          y= linkPositions[k][1]
           distance = abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) / math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2) # Distance point - ligne
-          if (distance <= seuil) and ((y1-marge <= y <= y2+marge) or (y2-marge<= y <= y1+marge)) and ((x1-marge<= x <=x2+marge) or (x2-marge<= x <= x1+marge)) : # Vérifie si lien présent à distance (seuil) de la droite tracée par deux noeuds
+          if (distance <= seuil) and ((y1-marge <= y <= y2+marge) or (y2-marge<= y <= y1+marge)) and ((x1-marge<= x <=x2+marge) or (x2-marge<= x <= x1+marge)) : # Vérifie si lien présent à distance (seuil) de la droite tracée par deux nodes
             listeLiens.append((k,i,j,ecart))
 
-  resultats = {} # On ne garde que les paires de noeuds les plus proches
+  resultats = {} # On ne garde que les paires de nodes les plus proches
   for k, i, j, ecart in listeLiens:
       if k not in resultats:  # Si lien pas encore dans le dictionnaire
           resultats[k] = (i, j, ecart)
@@ -129,18 +129,18 @@ def detectionLiens(positions, positionLiens):
   return listeLiensFinal
 
 
-def drawGraph(noeuds, positions, listeLiensFinal, image):
+def drawGraph(nodes, positions, listeLiensFinal, image):
   """
   This function creates a NetworkX graph from the nodes/link informations and overlay the graph on the base image.
 
-  :param noeuds: This is a list of the existing nodes.
+  :param nodes: This is a list of the existing nodes.
   :param positions: This is a dictionnary of the coordinates of each node.
   :param listeLiensFinal: Contains tuples of nodes that are connected by a link.
   :param image: This is the original image
   :returns: Rerturns the NetworkX Graph that has been created.
   """
   graph = nx.Graph()
-  graph.add_nodes_from(noeuds)
+  graph.add_nodes_from(nodes)
   graph.add_edges_from(listeLiensFinal)
   return graph
 
@@ -196,7 +196,7 @@ def conversionBlobRecorder(img,graph,positions,echelle,img_name):
       blobRecorder["features"].append(feature)
   # Ajout liens
   for edge in graph.edges:
-      start_node, end_node = edge   # Noeuds connectés au lien
+      start_node, end_node = edge   # nodes connectés au lien
       start_x, start_y = positions[start_node]  # x,y premier noeud
       end_x, end_y = positions[end_node]   # x,y second noeud
       start_x_echelle = start_x * echelle # mise à l'échelle
@@ -238,9 +238,9 @@ def blobDetection(img_name, data_dir):
   echelle = 1.28 # Mise à l'échelle par rapport a l'image blob recorder
 
   outputs, image = prediction(img_name, data_dir)  # Prediction using TorchScript Model
-  noeuds, positions, positionLiens = extractionOutputs(outputs)  # Extraction of outputs data
-  listeLiensFinal = detectionLiens(positions, positionLiens)  # Link detection between Nodes
-  graph = drawGraph(noeuds, positions, listeLiensFinal, image)  # Conversion to NetworkX and Drawing
+  nodes, positions, linkPositions = extractionOutputs(outputs)  # Extraction of outputs data
+  listeLiensFinal = detectionLiens(positions, linkPositions)  # Link detection between Nodes
+  graph = drawGraph(nodes, positions, listeLiensFinal, image)  # Conversion to NetworkX and Drawing
   file_json = conversionBlobRecorder(image,graph,positions,echelle,img_name)  # Conversion NetworkX to Blob Recorder
 
 blobDetection("boite_41_1.png", "C:\\Users\\Marin HURE\\Desktop\\physarum")
