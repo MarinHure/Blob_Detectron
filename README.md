@@ -26,7 +26,7 @@ The dataset consists of 192 images of petri dishes, annotated using the Supervis
 
 ![Annotation with supervisely](images_readme/supervisely.png)  
 
-Annotations are exported in the COCO format and split into training data "physarum_train" (80%) and test data "physarum_test" (20%).
+Annotations are exported in the COCO format and split into training data "physarum_train" (80%) and test data "physarum_test" (20%) using [cocosplit](https://github.com/akarazniewicz/cocosplit)
 
 We chose the Mask R-CNN model, an extension of Faster R-CNN, which utilizes the Detectron2 API.
 
