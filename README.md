@@ -178,6 +178,13 @@ There are instances where the model detects two secondary nodes stuck together i
 
 ![Erreur detection Ns](images_readme/pb_ns.png)
 
+## Installation
+
+``Blob_Detectron`` requires python 3 and basic set of dependencies:
+
+```
+pip install -r requirements
+```
 
 Please note that for confidentiality reasons, the model and the training images are not available on this GitHub repository. If you wish to access the images, you can contact the following addresses: y.boudi@labsoft.fr or j.otando@labsoft.fr.
 
